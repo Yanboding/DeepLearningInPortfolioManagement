@@ -152,6 +152,18 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# database
+database/
+*.db
+
+# pickel
+*.pkl
+
+# init files
+__init__.py
+
+# idea
+.idea
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
