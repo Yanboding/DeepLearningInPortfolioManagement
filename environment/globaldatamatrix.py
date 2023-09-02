@@ -2,6 +2,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import print_function
 
+import os
 import pandas as pd
 from tqdm import tqdm
 
@@ -11,16 +12,26 @@ from datetime import datetime
 import logging
 import xarray as xr
 
-from constants import TIME_LOOKUP
-
 from marketAPIWrapper.binance import Binance
+
+
+def initialize_db():
+    if not os.path.exists(DATABASE_DIR):
+        os.makedirs(DATABASE_DIR)
+    with sqlite3.connect(DATABASE) as connection:
+        cursor = connection.cursor()
+        cursor.execute('CREATE TABLE IF NOT EXISTS History (date FLOAT,'
+                       ' coin varchar(20), high FLOAT, low FLOAT,'
+                       ' open FLOAT, close FLOAT, volume FLOAT, quoteVolume FLOAT,'
+                       'PRIMARY KEY (date, coin));')
+        connection.commit()
 
 
 class HistoryManager:
     # if offline ,the coin_list could be None
     # NOTE: return of the sqlite results is a list of tuples, each tuple is a row
     def __init__(self, baseAsset='USDT', online=True, market=Binance):
-        self.initialize_db()
+        initialize_db()
         self.__storage_period = FIVE_MINUTES  # keep this as 300
         self._online = online
         self.baseAsset = baseAsset
@@ -33,15 +44,6 @@ class HistoryManager:
     @property
     def coins(self):
         return self.__coins
-
-    def initialize_db(self):
-        with sqlite3.connect(DATABASE_DIR) as connection:
-            cursor = connection.cursor()
-            cursor.execute('CREATE TABLE IF NOT EXISTS History (date FLOAT,'
-                           ' coin varchar(20), high FLOAT, low FLOAT,'
-                           ' open FLOAT, close FLOAT, volume FLOAT, quoteVolume FLOAT,'
-                           'PRIMARY KEY (date, coin));')
-            connection.commit()
 
     def allActiveCoins(self):
         # connect the internet to access marketTicker
@@ -99,7 +101,7 @@ class HistoryManager:
         time_index = pd.to_datetime(list(range(start, end + 1, period)), unit='s')
         panel = xr.DataArray(coords=[time_index, [self.baseAsset]+coins, list(features)], dims=['time', 'coin', 'feature'])
         panel.loc[time_index, self.baseAsset, features] = 1
-        with sqlite3.connect(DATABASE_DIR) as connection:
+        with sqlite3.connect(DATABASE) as connection:
             for row_number, coin in enumerate(coins):
                 for feature in features:
                     # NOTE: transform the start date to end date
@@ -142,7 +144,7 @@ class HistoryManager:
     def select_coins(self, start, end, coin_number):
         logging.info("select coins offline from %s to %s" % (datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M'),
                                                              datetime.fromtimestamp(end).strftime('%Y-%m-%d %H:%M')))
-        with sqlite3.connect(DATABASE_DIR) as connection:
+        with sqlite3.connect(DATABASE) as connection:
             sql = 'SELECT coin,SUM(quoteVolume)' \
                   ' AS total_volume From History' \
                   ' WHERE History.date BETWEEN :start AND :end' \
@@ -160,7 +162,7 @@ class HistoryManager:
 
     # add new history data into the database
     def update_data(self, coins, start, end):
-        with sqlite3.connect(DATABASE_DIR) as connection:
+        with sqlite3.connect(DATABASE) as connection:
             cursor = connection.cursor()
             # get all ticker, for each ticker, get all return data finnally store them in database
             # consider use multithread in the future
@@ -210,7 +212,7 @@ if __name__ == '__main__':
         'end': '2022-12-31',
         'period': '30m',
         'coins': ['BTC', 'ETH', 'XRP', 'BNB', 'ADA'],
-        'online': False,
+        'online': True,
         'features': ['close', 'high', 'low'],
         'baseAsset': 'USDT'
     }

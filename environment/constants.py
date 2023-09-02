@@ -3,6 +3,8 @@
 from os import path
 
 DATABASE_DIR = path.realpath(__file__).\
+    replace('environment/constants.py','database/')
+DATABASE = path.realpath(__file__).\
     replace('environment/constants.py','database/Data.db')
 # About time
 NOW = 0
@@ -19,6 +21,6 @@ TIME_LOOKUP = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400 , 'w': 604800, 'M': 259200
 TABLE_NAME = 'test'
 
 if __name__ == '__main__':
-    print(path.realpath(__file__))
+    print(DATABASE, DATABASE_DIR)
     print('DAY:', DAY)
 
