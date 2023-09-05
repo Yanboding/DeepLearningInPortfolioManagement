@@ -1,4 +1,8 @@
 from tqdm import tqdm
+from os import path
+
+weight_file = path.realpath(__file__).\
+    replace('actor_critic_model/train.py','actor_critic_model/weights/')
 
 def train(env, agent, epoch, max_time_steps, start_update, batch_size, noise, replay_buffer, action_valid_fn):
     total_rewards = []
@@ -16,6 +20,8 @@ def train(env, agent, epoch, max_time_steps, start_update, batch_size, noise, re
             # Train agent after collecting sufficient data
             if time_step >= start_update:
                 agent.update(replay_buffer, batch_size)
+            if time_step % 5 == 0:
+                agent.save(weight_file)
             if done or truncated:
                 break
         total_rewards.append(total_reward)

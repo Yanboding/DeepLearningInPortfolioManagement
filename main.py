@@ -121,7 +121,7 @@ if __name__ == '__main__':
             'critic_args': {'kernel_size': 3, 'hidden_channel1': 2, 'hidden_channel2': 20, 'hidden_layer': 64}
         },
         'train': {
-            'epoch': 2,
+            'epoch': 15,
             'episode_length': 512,
             'max_time_steps': 5000,
             'start_update': 100,
@@ -134,7 +134,7 @@ if __name__ == '__main__':
         },
         'evaluation': {
             'ratios': [0.8, 0.1, 0.1],
-            'eval_times': 2,
+            'eval_times': 20,
             'metrics': ['total_rewards', 'portfolio_values']
         }
     }
