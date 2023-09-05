@@ -1,6 +1,6 @@
 import gymnasium as gym
 import numpy as np
-from metric.finance_indicator import calculate_transaction_remainder_factor
+from metrics.finance_indicator import calculate_transaction_remainder_factor
 
 class TradingEnv(gym.Env):
 

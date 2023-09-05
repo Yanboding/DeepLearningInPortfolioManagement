@@ -6,6 +6,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "numpy>=1.20",
+        "scipy>=1.11",
         "pandas>=1.3",
         "Pillow>=10",
         "torch>=2.0",

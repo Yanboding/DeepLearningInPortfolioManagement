@@ -17,6 +17,15 @@ def plot_total_reward(total_rewards):
 
 
 def plot_confidence_intervals(confidence_intervals, includeText=False):
+    '''
+    confidence_intervals:
+    {'x':{'xlabel': str, 'data': list(float)},
+     'y': {'ylabel': str, 'data': list({'sample_mean': list(float),
+                                        'half_window': list(float),
+                                        'label': str})
+        }
+    }
+    '''
     fig, ax = plt.subplots(1, 1, figsize=(20, 10))
     ax.set_xlabel(confidence_intervals['x']['xlabel'])
     ax.set_ylabel(confidence_intervals['y']['ylabel'])
@@ -33,4 +42,17 @@ def plot_confidence_intervals(confidence_intervals, includeText=False):
                         (d['sample_mean'] + d['half_window']), alpha=.1)
     set_fontsize(ax, 20)
     plt.legend(fontsize=13)
+    plt.show()
+
+def plot_boxplot(data):
+    '''
+    {'x':{'xlabel':str, 'data':list(str) or None}, 'y':{'ylabel':str, 'data'[list(float)]}}
+    '''
+    fig, ax = plt.subplots(1, 1, figsize=(20, 10))
+    ax.set_xlabel(data['x']['xlabel'])
+    ax.set_ylabel(data['y']['ylabel'])
+    plt.boxplot(data['y']['data'])
+    if 'data' in data['x'] and data['x']['data']:
+        ax.set_xticks([i for i in range(1, len(data['x']['data'])+1)], data['x']['data'])
+    set_fontsize(ax, 20)
     plt.show()
