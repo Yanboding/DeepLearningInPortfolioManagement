@@ -168,6 +168,8 @@ actor_critic_model/weights
 .idea
 # DS_Store
 .DS_Store
+# reference
+reference/
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore

@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from os import path
+import os
 
-DATABASE_DIR = path.realpath(__file__).\
-    replace('environment/constants.py','database/')
-DATABASE = path.realpath(__file__).\
-    replace('environment/constants.py','database/Data.db')
+DATABASE_DIR = os.path.join(os.path.dirname(os.getcwd()), 'database')
+DATABASE = os.path.join(DATABASE_DIR, 'Data.db')
 # About time
 NOW = 0
 FIVE_MINUTES = 60 * 5

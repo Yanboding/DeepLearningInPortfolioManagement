@@ -4,7 +4,7 @@ import torch.nn as nn
 import os
 import pickle
 import sys
-DIR_PATH = "./"
+DIR_PATH = os.getcwd()
 python_folders = ['environment', 'actor_critic_model', 'marketAPIWrapper', 'metric', 'utils', 'backtest']
 for folder in python_folders:
     sys.path.append(os.path.join(DIR_PATH, folder))
