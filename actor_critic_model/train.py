@@ -15,13 +15,13 @@ def train(env, agent, epoch, max_time_steps, start_update, batch_size, noise, re
             # observation, reward, terminated, truncated, info
             state, reward, done, truncated, info = env.step(action)
             replay_buffer.add(prev_state, action, state, reward, done)
-            prev_state = state
-            total_reward += reward
             # Train agent after collecting sufficient data
             if time_step >= start_update:
                 agent.update(replay_buffer, batch_size)
             if time_step % 5 == 0:
                 agent.save(weight_file)
+            prev_state = state
+            total_reward += reward
             if done or truncated:
                 break
         total_rewards.append(total_reward)

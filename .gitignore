@@ -159,11 +159,8 @@ database/
 # pickel
 *.pkl
 
-# init files
-__init__.py
-
 # weights
-actor_critic_model/weights
+weights
 # idea
 .idea
 # DS_Store

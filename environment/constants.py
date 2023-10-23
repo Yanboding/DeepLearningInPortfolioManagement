@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 import os
 
-DATABASE_DIR = os.path.join(os.path.dirname(os.getcwd()), 'database')
+# always use os.path.realpath(__file__) to determine the location of the current file, constants.py.
+DATABASE_DIR = os.path.realpath(__file__).replace(os.path.join('environment', 'constants.py'), 'database')
 DATABASE = os.path.join(DATABASE_DIR, 'Data.db')
 # About time
 NOW = 0

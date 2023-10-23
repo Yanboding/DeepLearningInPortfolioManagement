@@ -3,10 +3,13 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import os
+import pickle
+
 import pandas as pd
 from tqdm import tqdm
 
-from constants import *
+from environment.constants import DATABASE_DIR, DATABASE, FIVE_MINUTES, FIFTEEN_MINUTES, HALF_HOUR, TWO_HOUR, FOUR_HOUR, DAY, \
+    TIME_LOOKUP
 import sqlite3
 from datetime import datetime
 import logging
@@ -200,23 +203,34 @@ def get_history_data_by_coins(start, end, period, coins, online, features, baseA
         end = datetime.strptime(end, "%Y-%m-%d").timestamp()
     if isinstance(period, str):
         period = TIME_LOOKUP[period[-1]] * int(period[:-1])
-    historyManager = HistoryManager(baseAsset, online)
-    history_data = historyManager.get_global_panel_by_coins(coins, start, end, period, features)
+    start_string = datetime.fromtimestamp(start).strftime('%Y-%m-%d')
+    end_string = datetime.fromtimestamp(end).strftime('%Y-%m-%d')
+    coins_string = '_'.join(coins+[baseAsset])
+    features_string = '_'.join(features)
+    file_name = '_'.join([start_string,end_string,coins_string,features_string])+'.pickle'
+    file_path = os.path.join(DATABASE_DIR, file_name)
+    # To load the xarray object from the pickle file
+
+    if os.path.exists(file_path) and not online:
+        with open(file_path, 'rb') as f:
+            history_data = pickle.load(f)
+    else:
+        historyManager = HistoryManager(baseAsset, online)
+        history_data = historyManager.get_global_panel_by_coins(coins, start, end, period, features)
+        with open(file_path, 'wb') as f:
+            pickle.dump(history_data, f)
     return history_data
 
 
 if __name__ == '__main__':
-    import pickle
     data_params = {
         'start': '2018-06-01',
-        'end': '2022-12-31',
+        'end': '2020-06-01',
         'period': '30m',
         'coins': ['BTC', 'ETH', 'XRP', 'BNB', 'ADA'],
-        'online': True,
+        'online': False,
         'features': ['close', 'high', 'low'],
         'baseAsset': 'USDT'
     }
     data = get_history_data_by_coins(**data_params)
-    with open('data.pkl', 'wb') as f:
-        pickle.dump(data, f)
-    print(len(data))
+    print(data)

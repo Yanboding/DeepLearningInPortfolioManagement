@@ -1,5 +1,7 @@
 import gymnasium as gym
 import numpy as np
+
+from environment import get_history_data_by_coins
 from metrics.finance_indicator import calculate_transaction_remainder_factor
 
 class TradingEnv(gym.Env):
@@ -86,3 +88,22 @@ class TradingEnv(gym.Env):
 
     def get_submatrix(self, time):
         return self.global_data[time:time + self.window_size, :, :]
+
+class TradingEnvWrapper(TradingEnv):
+
+    def __init__(self, start, end, period, coins, online, features, baseAsset='USDT', commission_rate=0.25, episode_length=128, window_size=50):
+        history_data = get_history_data_by_coins(start, end, period, coins, online, features, baseAsset)
+        super().__init__(history_data, commission_rate, episode_length, window_size)
+
+if __name__ == '__main__':
+    data_params = {
+        'start': '2018-06-01',
+        'end': '2020-06-01',
+        'period': '30m',
+        'coins': ['BTC', 'ETH', 'XRP', 'BNB', 'ADA'],
+        'online': False,
+        'features': ['close', 'high', 'low'],
+        'baseAsset': 'USDT'
+    }
+    env = TradingEnvWrapper(**data_params)
+    print(env.history_data)

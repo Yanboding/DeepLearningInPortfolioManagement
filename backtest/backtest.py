@@ -2,8 +2,8 @@ import numpy as np
 from environment.tradingEnvironment import TradingEnv
 from actor_critic_model.ddpg import DDPG
 from actor_critic_model.train import train
-from metrics.visulization import plot_total_reward, plot_confidence_intervals, plot_boxplot
-from metrics.stat import Stat
+from metrics import plot_total_reward, plot_confidence_intervals, plot_boxplot
+from utils import RunningStat
 
 
 def train_validation_test(data, ratios=[0.8, 0.1, 0.1]):
@@ -20,7 +20,7 @@ def train_validation_test(data, ratios=[0.8, 0.1, 0.1]):
 
 
 def evaluation(env, agent, max_time_steps, eval_times, episode_length, action_valid_fn):
-    performance = Stat(episode_length)
+    performance = RunningStat(episode_length)
     total_rewards = []
     for _ in range(eval_times):
         prev_state, info = env.reset()

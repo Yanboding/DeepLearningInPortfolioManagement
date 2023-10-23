@@ -15,6 +15,7 @@ setup(
         "matplotlib>=3.3.4",
         "ccxt>=4.0",
         "tqdm>=4.65",
-        "gymnasium>=0.28"
+        "gymnasium>=0.28",
+        "gpytorch"
     ],
 )

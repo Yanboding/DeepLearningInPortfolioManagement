@@ -33,9 +33,9 @@ class ReplayBuffer(object):
         ind = self.np_random.choice(self.size, size=batch_size)
 
         return (
-            torch.FloatTensor(self.state[ind]).to(self.device),
-            torch.FloatTensor(self.action[ind]).to(self.device),
-            torch.FloatTensor(self.next_state[ind]).to(self.device),
-            torch.FloatTensor(self.reward[ind]).to(self.device),
-            torch.FloatTensor(self.not_done[ind]).to(self.device)
+            torch.tensor(self.state[ind]).to(self.device),
+            torch.tensor(self.action[ind]).to(self.device),
+            torch.tensor(self.next_state[ind]).to(self.device),
+            torch.tensor(self.reward[ind]).to(self.device),
+            torch.tensor(self.not_done[ind]).to(self.device)
         )

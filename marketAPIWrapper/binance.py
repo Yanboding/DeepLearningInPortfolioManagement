@@ -1,4 +1,3 @@
-from concurrent import futures
 import math
 from environment.constants import TIME_LOOKUP
 import ccxt
