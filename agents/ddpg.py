@@ -1,6 +1,10 @@
 import copy
+import os
+
 import torch
 import torch.nn.functional as F
+from tqdm import tqdm
+
 
 class DDPG(object):
     def __init__(self, state_dim, action_dim, actor, critic, discount, tau, actor_args={}, critic_args={},
@@ -60,6 +64,30 @@ class DDPG(object):
 
         for param, target_param in zip(self.actor.parameters(), self.actor_target.parameters()):
             target_param.data.copy_(self.tau * param.data + (1 - self.tau) * target_param.data)
+
+    def fit(self, env, epoch, max_time_steps, start_update, batch_size, noise, replay_buffer, action_valid_fn):
+        weight_file = os.path.realpath(__file__). \
+            replace(os.path.join('agents', 'ddpg.py'), os.path.join('agents', 'weights'))
+        total_rewards = []
+        for _ in tqdm(range(epoch)):
+            prev_state, info = env.reset()
+            total_reward = 0
+            for time_step in range(max_time_steps):
+                action = action_valid_fn(self.select_action(prev_state) + noise())
+                # observation, reward, terminated, truncated, info
+                state, reward, done, truncated, info = env.step(action)
+                replay_buffer.add(prev_state, action, state, reward, done)
+                # Train agent after collecting sufficient data
+                if time_step >= start_update:
+                    self.update(replay_buffer, batch_size)
+                if time_step % 5 == 0:
+                    self.save(weight_file)
+                prev_state = state
+                total_reward += reward
+                if done or truncated:
+                    break
+            total_rewards.append(total_reward)
+        return total_rewards
 
     def save(self, filename):
         torch.save(self.critic.state_dict(), filename + "ddpg_critic")
